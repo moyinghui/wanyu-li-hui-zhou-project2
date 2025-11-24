@@ -10,7 +10,7 @@ body {
   color: #e5e7eb;
 }
 
-/* 布局 */
+/* Layout */
 
 .app-shell {
   min-height: 100vh;
@@ -70,7 +70,7 @@ body {
   padding: 1.5rem 1rem 3rem;
 }
 
-/* 页面基础样式 */
+/* Page base styles */
 
 .page-title {
   margin-top: 0.5rem;
@@ -86,7 +86,7 @@ body {
   border: 1px solid rgba(148, 163, 184, 0.35);
 }
 
-/* 按钮样式 */
+/* Button styles */
 
 button {
   font-family: inherit;
@@ -131,7 +131,7 @@ button:disabled,
   background: rgba(30, 64, 175, 0.8);
 }
 
-/* 表单 */
+/* Forms */
 
 .auth-form {
   display: flex;
@@ -161,7 +161,7 @@ button:disabled,
   outline-offset: 1px;
 }
 
-/* 游戏列表 */
+/* Game list */
 
 .game-list {
   list-style: none;
@@ -187,7 +187,7 @@ button:disabled,
   color: #e5e7eb;
 }
 
-/* Timer 和状态 */
+/* Timer and status */
 
 .timer {
   margin-bottom: 0.5rem;
@@ -210,7 +210,7 @@ button:disabled,
   font-weight: 600;
 }
 
-/* Sudoku 棋盘 */
+/* Sudoku board */
 
 .sudoku-grid {
   display: grid;
@@ -241,36 +241,36 @@ button:disabled,
   cursor: pointer;
 }
 
-/* 初始数字（不能改） */
+/* Initial numbers (cannot be changed) */
 .cell.fixed {
   background: #111827;
   font-weight: 700;
 }
 
-/* hover 效果 */
+/* Hover effect */
 .cell:hover {
   background: #1f2937;
 }
 
-/* 选中格子 */
+/* Selected cell */
 .cell.selected {
   border-color: #38bdf8;
   box-shadow: 0 0 0 1px #38bdf8;
 }
 
-/* 错误格子 */
+/* Error cells */
 .cell.error {
   border-color: #f97373;
   background: #7f1d1d;
 }
 
-/* Hint 格子（如果你做了 hint bonus，可以用） */
+/* Hint cells (if you implemented hint bonus, you can use this) */
 .cell.hint {
   box-shadow: 0 0 0 2px #facc15;
   background: #1e293b;
 }
 
-/* 子宫格粗边框 + 外边框 */
+/* Block borders + outer borders */
 .cell.block-top {
   border-top: 3px solid #e5e7eb;
 }
@@ -284,7 +284,7 @@ button:disabled,
   border-right: 3px solid #e5e7eb;
 }
 
-/* 响应式：手机上更紧凑 */
+/* Responsive: more compact on mobile */
 
 @media (max-width: 768px) {
   .navbar {

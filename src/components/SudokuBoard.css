@@ -24,30 +24,29 @@
   transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 
-/* 初始数字（不能改） */
 .cell.fixed {
   background: #e9e9e9;
   font-weight: 700;
 }
 
-/* hover 效果 */
+/* hover cell */
 .cell:hover {
   background: #f7f3d6;
 }
 
-/* 选中格子 */
+/* selected cell */
 .cell.selected {
   border-color: #1976d2;
   box-shadow: 0 0 0 1px #1976d2;
 }
 
-/* 错误格子 */
+/* error cell */
 .cell.error {
   border-color: #e53935;
   background: #ffe6e6;
 }
 
-/* 子宫格粗边框 + 外边框 */
+/* block borders + outer borders */
 .cell.block-top {
   border-top: 3px solid #000;
 }
@@ -61,7 +60,7 @@
   border-right: 3px solid #000;
 }
 
-/* ------- 手机模式下让棋盘更紧凑 ------- */
+/* ------- Makes the chessboard more compact in mobile mode ------- */
 
 @media (max-width: 600px) {
   .sudoku-grid {

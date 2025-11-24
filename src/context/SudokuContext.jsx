@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 const SudokuContext = createContext(null);
 const STORAGE_KEY = "neo-sudoku-state-v1";
 
-// 6x6 的完整解
+// Complete solution for 6x6
 const SOLUTION_6 = [
   [1, 2, 3, 4, 5, 6],
   [4, 5, 6, 1, 2, 3],
@@ -13,7 +13,7 @@ const SOLUTION_6 = [
   [6, 1, 2, 3, 4, 5],
 ];
 
-// 9x9 的完整解
+// Complete solution for 9x9
 const SOLUTION_9 = [
   [1, 2, 3, 4, 5, 6, 7, 8, 9],
   [4, 5, 6, 7, 8, 9, 1, 2, 3],
@@ -30,7 +30,7 @@ function clone2D(array) {
   return array.map((row) => [...row]);
 }
 
-// 6x6 用 2x3 block，9x9 用 3x3 block
+// 6x6 uses 2x3 blocks, 9x9 uses 3x3 blocks
 function getBlockDimensions(size) {
   if (size === 6) {
     return { blockRows: 2, blockCols: 3 };
@@ -38,21 +38,21 @@ function getBlockDimensions(size) {
   return { blockRows: 3, blockCols: 3 };
 }
 
-// 检查在 (row, col) 放 num 是否满足行、列、子宫格约束
+// Check if placing num at (row, col) satisfies row, column, and block constraints
 function isSafe(board, row, col, num, size) {
   const { blockRows, blockCols } = getBlockDimensions(size);
 
-  // 行
+  // Row
   for (let c = 0; c < size; c++) {
     if (board[row][c] === num) return false;
   }
 
-  // 列
+  // Column
   for (let r = 0; r < size; r++) {
     if (board[r][col] === num) return false;
   }
 
-  // 子宫格
+  // Block
   const startRow = row - (row % blockRows);
   const startCol = col - (col % blockCols);
   for (let r = startRow; r < startRow + blockRows; r++) {
@@ -64,14 +64,14 @@ function isSafe(board, row, col, num, size) {
   return true;
 }
 
-// 用回溯计算当前盘面有多少个解（最多计到 limit）
+// Use backtracking to count how many solutions the current board has (up to a limit)
 function countSolutions(board, size, limit = 2) {
   let count = 0;
 
   function backtrack() {
     if (count >= limit) return;
 
-    // 找第一个空格
+    // Find the first empty cell
     let row = -1;
     let col = -1;
     outer: for (let r = 0; r < size; r++) {
@@ -84,19 +84,19 @@ function countSolutions(board, size, limit = 2) {
       }
     }
 
-    // 没有空格了 → 找到一个完整解
+    // No empty cells → found a complete solution
     if (row === -1) {
       count++;
       return;
     }
 
-    // 尝试放 1..size
+    // Try placing 1..size
     for (let num = 1; num <= size; num++) {
       if (isSafe(board, row, col, num, size)) {
         board[row][col] = num;
         backtrack();
         board[row][col] = 0;
-        if (count >= limit) return; // 提前结束
+        if (count >= limit) return; // Early exit
       }
     }
   }
@@ -106,16 +106,16 @@ function countSolutions(board, size, limit = 2) {
 }
 
 
-// 从完整解里“挖洞”，但每次挖完都用回溯检查是否仍然是唯一解
+// Use backtracking to "dig holes" from a complete solution, ensuring uniqueness after each removal
 function makeUniquePuzzleFromSolution(solution, cluesCount) {
   const size = solution.length;
   const totalCells = size * size;
 
-  // 从完整解开始
+  // Start from the complete solution
   const board = clone2D(solution);
 
   const indices = Array.from({ length: totalCells }, (_, i) => i);
-  // Fisher–Yates shuffle，打乱挖洞顺序
+  // Fisher–Yates shuffle, shuffle the order of digging holes
   for (let i = indices.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [indices[i], indices[j]] = [indices[j], indices[i]];
@@ -135,11 +135,11 @@ function makeUniquePuzzleFromSolution(solution, cluesCount) {
     const backup = board[r][c];
     board[r][c] = 0;
 
-    // 拷贝一份当前盘面，统计解的数量
+    // Clone the current board and count the number of solutions
     const temp = clone2D(board);
     const solutions = countSolutions(temp, size, 2);
 
-    // 如果不唯一（解 ≠ 1），就撤销这个挖洞
+    // If not unique (solutions ≠ 1), revert this hole digging
     if (solutions !== 1) {
       board[r][c] = backup;
     } else {
@@ -151,7 +151,7 @@ function makeUniquePuzzleFromSolution(solution, cluesCount) {
 }
 
 
-// 计算所有违反规则的格子：返回一个 { "r-c": true } 的 map
+// Calculate all cells that violate rules: return a map { "r-c": true }
 function computeErrors(board, size) {
   const errors = {};
   const { blockRows, blockCols } = getBlockDimensions(size);
@@ -217,10 +217,10 @@ export function SudokuProvider({ children }) {
   const [board, setBoard] = useState([]);
   const [status, setStatus] = useState("idle"); // 'idle' | 'playing' | 'completed'
   const [errors, setErrors] = useState({}); // { "r-c": true }
-  const [elapsed, setElapsed] = useState(0); // 秒
-  const [hintCell, setHintCell] = useState(null); // "r-c" 或 null
+  const [elapsed, setElapsed] = useState(0); // seconds
+  const [hintCell, setHintCell] = useState(null); // "r-c" or null
 
-  // 初始加载：如果 localStorage 里有保存的游戏，就恢复
+  // Initial load: if there is a saved game in localStorage, restore it
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -245,7 +245,7 @@ export function SudokuProvider({ children }) {
     }
   }, []);
 
-  // 计时器：只在 playing 状态下自增
+  // Timer: increment only when status is "playing"
   useEffect(() => {
     if (status !== "playing") {
       return;
@@ -258,7 +258,7 @@ export function SudokuProvider({ children }) {
     return () => clearInterval(id);
   }, [status]);
 
-  // 每次状态变化时，把游戏保存到 localStorage
+  // Save the game to localStorage whenever the state changes
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (!board.length) return;
@@ -336,7 +336,7 @@ export function SudokuProvider({ children }) {
     if (status !== "playing") return;
     if (!board.length) return;
 
-    // 不能改初始格子
+    // Cannot change initial cells
     if (initialBoard[row][col] !== 0) return;
 
     let num;
@@ -354,7 +354,7 @@ export function SudokuProvider({ children }) {
     const nextErrors = computeErrors(next, size);
     setBoard(next);
     setErrors(nextErrors);
-    setHintCell(null); // 用户开始输入后取消 hint 高亮
+    setHintCell(null); // Cancel hint highlight when the user starts typing
 
     const hasEmpty = next.some((r) => r.includes(0));
     const hasErrors = Object.keys(nextErrors).length > 0;
@@ -366,7 +366,7 @@ export function SudokuProvider({ children }) {
     }
   }
 
-  // Hint：找一个只有唯一合法候选数字的空格
+  // Hint: find a cell with a unique valid candidate number
   function giveHint() {
     if (status !== "playing") return;
     if (!board.length) return;
@@ -383,12 +383,12 @@ export function SudokuProvider({ children }) {
           temp[r][c] = v;
           const tempErrors = computeErrors(temp, size);
 
-          // 如果这个填入后，这个格子不是错误，就认为 v 是一个合法候选
+          // If this placement does not cause an error in this cell, consider v a valid candidate
           if (!tempErrors[`${r}-${c}`]) {
             candidates.push(v);
           }
 
-          if (candidates.length > 1) break; // 多于一个候选就跳出
+          if (candidates.length > 1) break; // More than one candidate, break out
         }
 
         if (candidates.length === 1) {
@@ -398,7 +398,7 @@ export function SudokuProvider({ children }) {
       }
     }
 
-    // 如果没有找到唯一候选的格子，可以选择不做任何事
+    // If no cell with a unique candidate is found, do nothing
   }
 
   const value = {
