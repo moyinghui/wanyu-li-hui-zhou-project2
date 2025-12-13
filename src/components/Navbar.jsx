@@ -1,17 +1,41 @@
-import { NavLink } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
+  const { user, logout, loading } = useAuth();
+  const navigate = useNavigate();
+
+  if (loading) return null;
+
+  async function handleLogout() {
+    await logout();
+    navigate("/");
+  }
+
   return (
     <nav className="navbar">
-      <div className="navbar-logo">Neo Sudoku</div>
-      <ul className="navbar-links">
-        <li><NavLink to="/" end>Home</NavLink></li>
-        <li><NavLink to="/games">Games</NavLink></li>
-        <li><NavLink to="/rules">Rules</NavLink></li>
-        <li><NavLink to="/scores">Scores</NavLink></li>
-        <li><NavLink to="/login">Login</NavLink></li>
-        <li><NavLink to="/register">Register</NavLink></li>
-      </ul>
+      <Link to="/" className="nav-brand">
+        Sudoku
+      </Link>
+
+      <div className="nav-links">
+        <Link to="/games">Games</Link>
+        <Link to="/scores">Scores</Link>
+
+        {!user ? (
+          <>
+            <Link to="/login">Login</Link>
+            <Link to="/register">Register</Link>
+          </>
+        ) : (
+          <>
+            <span className="nav-user">Hello, {user}</span>
+            <button onClick={handleLogout} className="btn-link">
+              Logout
+            </button>
+          </>
+        )}
+      </div>
     </nav>
   );
 }
