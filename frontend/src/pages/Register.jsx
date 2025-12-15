@@ -10,7 +10,7 @@ export default function Register() {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { setUser } = useAuth();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -27,7 +27,8 @@ export default function Register() {
         body: JSON.stringify({ username, password }),
       });
 
-      login(res.username);
+      // Update global auth state
+      setUser(res.username);
 
       navigate("/games");
     } catch (err) {
