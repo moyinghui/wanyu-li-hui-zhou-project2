@@ -26,7 +26,14 @@ export default function Login() {
 
       navigate("/games");
     } catch (err) {
-      setError(err.message || "Login failed");
+      // Provide more helpful error messages
+      let errorMessage = err.message || "Login failed";
+      if (errorMessage.includes("Cannot connect to server")) {
+        errorMessage = "Cannot connect to server. Please ensure the backend server is running.";
+      } else if (errorMessage.includes("Failed to fetch")) {
+        errorMessage = "Network error. Please check your connection and ensure the server is running.";
+      }
+      setError(errorMessage);
     }
   }
 
